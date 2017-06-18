@@ -1,3 +1,5 @@
+Add LoadPath "/Users/YuryKravchenko/Documents/coq-supplementary/".
+
 Require Import List.
 Import ListNotations.
 Require Import Omega.
@@ -54,7 +56,18 @@ where "c1 == s ==> c2" := (bs_int s c1 c2).
 
 (* Big-step semantics is deterministic *)
 Lemma bs_int_deterministic : forall (c c1 c2 : conf) (s : stmt), c == s ==> c1 -> c == s ==> c2 -> c1 = c2.
-Proof. admit. Admitted.
+Proof.
+
+Proof. intros. generalize dependent c2. induction H.
+  - intros. inversion H0. auto.
+  - intros. inversion H0. remember (bs_eval_deterministic e s z z0 H H7). rewrite e1. auto.
+  - intros. inversion H0. auto.
+  - intros. inversion H0. remember (bs_eval_deterministic e s z z0 H H6). rewrite e1. auto.
+  - intros. inversion H1. remember (IHbs_int1 c'0 H4). rewrite <- e in H7. apply (IHbs_int2 c2 H7).
+  - intros. inversion H1. apply (IHbs_int c2 H10). remember (bs_eval_deterministic e s (Z.one) (Z.zero) H H9). inversion e1.
+  - intros. inversion H1. remember (bs_eval_deterministic e s (Z.zero) (Z.one) H H9). inversion e1. apply (IHbs_int c2 H10).
+  - intros. inversion H2. remember (IHbs_int1 c'0 H10). rewrite <- e1 in H11. apply (IHbs_int2 c2 H11). remember (bs_eval_deterministic e st (Z.one) (Z.zero) H H9). inversion e1.
+  - intros. inversion H0. remember (bs_eval_deterministic e st (Z.zero) (Z.one) H H7). inversion e1. auto. Qed.
 
 Reserved Notation "s1 '~~~' s2" (at level 0).
 
